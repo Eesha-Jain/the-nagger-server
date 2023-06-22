@@ -55,7 +55,7 @@ io.on("connection", function (socket) {
   });
 });
 
-const port = 3000; // Replace with your desired port number
+const port = 4000; // Replace with your desired port number
 server.listen(port, () => {
   console.log(`Socket.io server running on port ${port}`);
 });
