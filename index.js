@@ -53,6 +53,12 @@ io.on("connection", function (socket) {
 
     io.emit("changeCheck", itemsTwo);
   });
+
+  socket.on("sendNotif", (item) => {
+    console.log("Send notification connection");
+
+    io.emit("sendNotif", item);
+  });
 });
 
 const port = 4000; // Replace with your desired port number
