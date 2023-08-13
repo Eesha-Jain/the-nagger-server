@@ -1,11 +1,15 @@
-const express = require("express")
+const express = require("express");
+const cors = require('cors');
+
 var app = express();
 var server = app.listen(4000);
 var io = require('socket.io')(server, {
-    cors: {
-      origin: '*',
-    }
+  cors: {
+    origin: '*',
+  }
 });
+
+app.use(cors());
 
 let items = [];
 
