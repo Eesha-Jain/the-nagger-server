@@ -1,10 +1,10 @@
-const http = require("http");
-const server = http.createServer();
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  },
+const express = require("express")
+var app = express();
+var server = app.listen(4000);
+var io = require('socket.io')(server, {
+    cors: {
+      origin: '*',
+    }
 });
 
 let items = [];
