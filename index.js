@@ -52,8 +52,3 @@ io.on("connection", function (socket) {
     io.emit("sendNotif", item);
   });
 });
-
-const PORT = 3030;
-app.listen(PORT, () => {
-  console.log(`listening on port ${PORT}`);
-});
