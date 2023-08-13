@@ -1,7 +1,13 @@
-const express = require('express')
-const app = express()
-const server = require('http').createServer(app);
-const io = require('socket.io')(server)
+const express = require("express")
+var app = express();
+var server = app.listen(3030);
+var io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+let items = [];
 
 io.on("connection", function (socket) {
   socket.on("add", (value) => {
@@ -47,11 +53,7 @@ io.on("connection", function (socket) {
   });
 });
 
-// Magic Lines
-server.prependListener("request", (req, res) => {
-   res.setHeader("Access-Control-Allow-Origin", "*");
-});
-// instead of "*" your can also add the other domain/servername
-server.listen(7000, () => {
-   console.log("This is the socket server running");
+const PORT = 3030;
+app.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
 });
