@@ -1,17 +1,7 @@
-const express = require("express");
-const cors = require('cors');
-
-var app = express();
-var server = app.listen(4000);
-var io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-  }
-});
-
-app.use(cors());
-
-let items = [];
+const express = require('express')
+const app = express()
+const server = require('http').createServer(app);
+const io = require('socket.io')(server)
 
 io.on("connection", function (socket) {
   socket.on("add", (value) => {
@@ -57,7 +47,11 @@ io.on("connection", function (socket) {
   });
 });
 
-const port = 4000; // Replace with your desired port number
-server.listen(port, () => {
-  console.log(`Socket.io server running on port ${port}`);
+// Magic Lines
+server.prependListener("request", (req, res) => {
+   res.setHeader("Access-Control-Allow-Origin", "*");
+});
+// instead of "*" your can also add the other domain/servername
+server.listen(7000, () => {
+   console.log("This is the socket server running");
 });
