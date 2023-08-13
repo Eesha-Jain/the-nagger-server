@@ -22,15 +22,7 @@ io.on("connection", function (socket) {
   socket.on("delete", (value) => {
     console.log("Delete socket connection");
 
-    let index = 0;
-    for (let i = 0; i < items.length; i++) {
-      if (items._id === value._id) {
-        index = i;
-        break;
-      }
-    }
-
-    var itemsTwo = [...items.slice(0, index), ...items.slice(index + 1)];
+    var itemsTwo = [...items.slice(0, value), ...items.slice(value + 1)];
     items = itemsTwo;
 
     io.emit("delete", itemsTwo);
