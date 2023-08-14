@@ -1,49 +1,78 @@
-const express = require("express")
+const express = require("express");
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
+
+const supabase = createClient(
+  process.env.PROJECT_ID,
+  process.env.PROJECT_API_KEY
+)
+
 var app = express();
-var server = app.listen(3030);
+var server = app.listen(80);
 var io = require('socket.io')(server, {
   cors: {
     origin: '*',
   }
 });
 
-let items = [];
+async function getTasks() {
+  const { data, error2 } = await supabase
+    .from('tasks')
+    .select();
+  
+  if (error2) console.log(error2);
+  
+  return data;
+}
 
 io.on("connection", function (socket) {
-  socket.on("add", (value) => {
+  socket.on("get", async () => {
+    console.log("Get socket connection");
+
+    const data = await getTasks();
+    io.emit("get", data);
+  });
+
+  socket.on("add", async (value) => {
     console.log("Add socket connection");
 
-    var itemsTwo = [...items, value];
-    items = itemsTwo;
+    const { error } = await supabase
+      .from('tasks')
+      .insert(value)
+      .select();
+    
+    if (error) console.log(error);
 
-    io.emit("add", itemsTwo);
+    const data = await getTasks();
+    io.emit("add", data);
   });
 
-  socket.on("delete", (value) => {
+  socket.on("delete", async (value) => {
     console.log("Delete socket connection");
 
-    var itemsTwo = [...items.slice(0, value), ...items.slice(value + 1)];
-    items = itemsTwo;
-
-    io.emit("delete", itemsTwo);
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('uuid', value.uuid);
+    
+    if (error) console.log(error);
+    
+    const data = await getTasks();
+    io.emit("delete", data);
   });
 
-  socket.on("changeCheck", (value) => {
+  socket.on("changeCheck", async (value) => {
     console.log("Change check socket connection");
 
-    let index = 0;
-    for (let i = 0; i < items.length; i++) {
-      if (items._id === value._id) {
-        index = i;
-        break;
-      }
-    }
-    value.done = !value.done;
+    const { error } = await supabase
+      .from('tasks')
+      .update({ done: !value.done })
+      .eq('uuid', value.uuid);
 
-    var itemsTwo = [...items.slice(0, index), value, ...items.slice(index + 1)];
-    items = itemsTwo;
+    if (error) console.log(error);
 
-    io.emit("changeCheck", itemsTwo);
+    const data = await getTasks();
+    io.emit("changeCheck", data);
   });
 
   socket.on("sendNotif", (item) => {
